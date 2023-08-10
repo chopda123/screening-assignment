@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cookie Management</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <h1>Cookie Management</h1>
+    <div class="cooki">
+        <input type="text" id="cookieName" placeholder="Cookie Name">
+        <input type="text" id="cookieValue" placeholder="Cookie Value">
+    </div>
+
+    <div class="btn">
+        
+    <button id="createButton">Create</button>
+    <button id="deleteButton">Delete</button>
+    <button id="retrieveButton">Retrieve</button>
+    </div>
+  
+  
+    <ul id="cookieList"></ul>
+
+    <script>
+        const createButton = document.getElementById('createButton');
+        const deleteButton = document.getElementById('deleteButton');
+        const retrieveButton = document.getElementById('retrieveButton');
+        const cookieNameInput = document.getElementById('cookieName');
+        const cookieValueInput = document.getElementById('cookieValue');
+        const cookieList = document.getElementById('cookieList');
+
+        createButton.addEventListener('click', () => {
+            const cookieName = cookieNameInput.value;
+            const cookieValue = cookieValueInput.value;
+            document.cookie = `${cookieName}=${cookieValue}`;
+            alert(`Cookie "${cookieName}" created.`);
+            updateCookieList();
+        });
+
+        deleteButton.addEventListener('click', () => {
+            const cookieName = cookieNameInput.value;
+            const cookieValue = cookieValueInput.value;
+            // Store the cookie data in local storage before deleting
+            localStorage.setItem('deletedCookieName', cookieName);
+            localStorage.setItem('deletedCookieValue', cookieValue);
+            // Delete the cookie
+            document.cookie = `${cookieName}=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;`;
+            alert(`Cookie "${cookieName}" deleted.`);
+            updateCookieList();
+        });
+
+        retrieveButton.addEventListener('click', () => {
+            const deletedCookieName = localStorage.getItem('deletedCookieName');
+            const deletedCookieValue = localStorage.getItem('deletedCookieValue');
+            if (deletedCookieName && deletedCookieValue) {
+                alert(`Deleted Cookie - Name: ${deletedCookieName}, Value: ${deletedCookieValue}`);
+            } else {
+                alert('No deleted cookie data found in local storage.');
+            }
+        });
+
+        function updateCookieList() {
+            const cookies = document.cookie.split('; ');
+            cookieList.innerHTML = '';
+            cookies.forEach(cookie => {
+                const [name, value] = cookie.split('=');
+                const listItem = document.createElement('li');
+                listItem.textContent = `Name: ${name}, Value: ${value}`;
+                cookieList.appendChild(listItem);
+            });
+        }
+
+        // Update the cookie list on page load
+        updateCookieList();
+    </script>
+</body>
+</html>
